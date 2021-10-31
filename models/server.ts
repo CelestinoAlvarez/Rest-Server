@@ -1,6 +1,7 @@
 
 import express from "express";
 import cors from "cors";
+import { dbConnection } from "../db/config.db";
 
 
 export class Server{
@@ -11,6 +12,11 @@ export class Server{
     constructor(){
         this.app=express();
         this.port = process.env.PORT;
+
+        
+
+        //Conectar a la BBDD
+        this.conectarDB();
         
         //Rutas del API
         this.usuariosPath='/api/usuarios';
@@ -38,5 +44,9 @@ export class Server{
         this.app.use(express.json());
         //Directorio público
         this.app.use(express.static('public'));
+    }
+
+    async conectarDB(){
+        await dbConnection();
     }
 }
