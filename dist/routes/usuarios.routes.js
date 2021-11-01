@@ -6,6 +6,7 @@ const express_validator_1 = require("express-validator");
 const usuarios_controller_1 = require("../controllers/usuarios.controller");
 const db_validators_1 = require("../helpers/db-validators");
 const validar_campos_1 = require("../middlewares/validar-campos");
+const validar_jwt_1 = require("../middlewares/validar-jwt");
 exports.router = express_1.Router();
 exports.router.get('/', usuarios_controller_1.usuariosGet);
 exports.router.put('/:id', [
@@ -24,6 +25,7 @@ exports.router.post('/', [
     validar_campos_1.validarCampos
 ], usuarios_controller_1.usuariosPost);
 exports.router.delete('/:id', [
+    validar_jwt_1.validarJWT,
     express_validator_1.check('id', 'No es un id válido').isMongoId(),
     express_validator_1.check('id').custom(db_validators_1.existeUsuarioPorId),
     validar_campos_1.validarCampos

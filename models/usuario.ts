@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
-interface usuario  {
+export interface usuario  {
+    uid:string,
     nombre:string,
     email:string,
     password:string,
@@ -42,7 +43,8 @@ export const usuarioSchema=new Schema<usuario>({
 });
 
 usuarioSchema.methods.toJSON=function(){
-    const { __v, password, ...usuario }=this.toObject();
+    const { __v, password, _id, ...usuario }=this.toObject();
+    usuario.uid=_id;
     return usuario;
 }
 

@@ -8,6 +8,7 @@ export class Server{
     app: any;
     port: string | undefined;
     usuariosPath: string='';
+    authPath: string;
 
     constructor(){
         this.app=express();
@@ -20,6 +21,7 @@ export class Server{
         
         //Rutas del API
         this.usuariosPath='/api/usuarios';
+        this.authPath='/api/auth';
 
         //Middlewares
         this.middlewares();
@@ -31,6 +33,7 @@ export class Server{
 
     routes(){
        this.app.use(this.usuariosPath, require('../routes/usuarios.routes'));
+       this.app.use(this.authPath, require('../routes/auth.routes'));
     }
 
     listen(){
