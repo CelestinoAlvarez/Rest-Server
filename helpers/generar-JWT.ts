@@ -1,5 +1,14 @@
 import jwt from "jsonwebtoken";
 
+export interface userPayload{
+    uid:string;
+}
+
+export interface JwtExpPayload {
+    expiresIn: string;
+    exp: number;
+  }
+
 export const generarJWT=(uid:string)=>{
 
     return new Promise(

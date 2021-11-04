@@ -67,6 +67,8 @@ const usuariosPost = (req, res) => __awaiter(void 0, void 0, void 0, function* (
 exports.usuariosPost = usuariosPost;
 const usuariosDelete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
+    const uid = req.uid;
+    const usuarioAutenticado = req.usuario;
     //Borrado de la base de datos.
     //const usuarioBorrado = await Usuario.findByIdAndDelete(id);
     //Cambiamos el estado del usuario.

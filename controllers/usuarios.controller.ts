@@ -56,6 +56,9 @@ export const usuariosPost = async (req:Request,res:Response)=>{
 
 export const usuariosDelete = async (req:Request,res:Response)=>{
     const {id}=req.params;
+   
+    const uid=req.uid;
+    const usuarioAutenticado= req.usuario;
 
     //Borrado de la base de datos.
     //const usuarioBorrado = await Usuario.findByIdAndDelete(id);
@@ -68,6 +71,7 @@ export const usuariosDelete = async (req:Request,res:Response)=>{
     //     Usuario.findByIdAndUpdate(id,usuarioBorrado);
     // }
    
+
     res.json({
         usuarioBorrado
     });
