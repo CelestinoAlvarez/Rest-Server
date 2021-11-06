@@ -7,6 +7,57 @@
     <title>Acceso denegado</title>
 </head>
 <body>
-    <h1>ACCESO DENEGADO</h1>
+    <h1>GOOGLE Sign-In</h1>
+    <hr>
+
+    <div id="g_id_onload"
+    data-client_id="655018190058-p0gk1r37p87ntcp9c034o1s1hkvacksm.apps.googleusercontent.com"
+    data-auto_prompt="false"
+    data-callback="handleCredentialResponse">
+ </div>
+ <div class="g_id_signin"
+    data-type="standard"
+    data-size="large"
+    data-theme="outline"
+    data-text="sign_in_with"
+    data-shape="rectangular"
+    data-logo_alignment="left">
+ </div >
+
+<button id="googleSignOut">SignOut</button>
+
+ <script src="https://accounts.google.com/gsi/client" async defer></script>
+  
+ <script>
+    function handleCredentialResponse(response) {
+       //Google token: ID_TOKEN
+       //console.log('id.token',response.credential);
+       const body={id_token:response.credential};
+       fetch('http://localhost:8080/api/auth/google', {
+           method:'POST',
+           headers:{
+               'Content-Type':'application/json'
+           },
+           body:JSON.stringify(body)
+       })
+        .then(res=>res.json())
+        .then(res=>{
+            console.log(res),
+            localStorage.setItem("email",res.usuario.email)}
+            ).catch(
+                console.warn
+            );}
+
+const signOut=document.getElementById('googleSignOut');
+signOut.addEventListener('click',()=>{
+    console.log(google.accounts.id);
+    google.accounts.id.revoke(localStorage.getItem('email')), done=>{
+        console.log("Antes de borrar");
+        localStorage.clear();
+        location.reload();
+    };
+})
+  </script>
+
 </body>
 </html>

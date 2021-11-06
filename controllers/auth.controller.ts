@@ -3,6 +3,7 @@ import bcript from "bcryptjs";
 
 import { Usuario, usuario } from "../models/usuario";
 import { generarJWT } from "../helpers/generar-JWT";
+import { googleVerify } from "../helpers/google-verify";
 
 export const login= async (req:Request, res:Response)=>{
 
@@ -46,7 +47,70 @@ export const login= async (req:Request, res:Response)=>{
         return res.status(500).json({
             msg:"Error, hable con el administrador"
         })
+    }  
+}
+
+export const googleSingIn=async(req:Request, res:Response)=>{
+    const {id_token}=req.body;
+
+    try {
+        const googleUser=await googleVerify(id_token);
+
+        console.log(googleUser);
+        const {nombre, email, imagen }=googleUser;
+        console.log('');
+        console.log(nombre +'  -   '+email+'   -');
+        
+        //Comprobamos si el correo ya existe en la BBDD
+        let usuario = await Usuario.findOne({email});
+
+        if (!usuario){
+            //Lo creamos
+            
+            const data = {
+                nombre,
+                email,
+                imagen,
+                password:'Da igual lo que se mande',
+                google:true,
+                rol:'VENTAS-ROLE'
+            }
+         
+            usuario = new Usuario(data);
+            console.log('Creamos el usuario', data);
+       
+            await usuario.save();
+            console.log('Después de save', data);
+       
+        }
+        
+        //Si ya tenemos el usuario vamos a comprobar si no está bloqueado
+        if(!usuario.estado){
+            return res.status(401).json({
+                ok:false,
+                msg:"Usuario bloqueado"
+            })
+        }
+
+        //Generamos el JWT
+
+        const token = await generarJWT(usuario!._id);
+
+        
+        res.json({
+            msg:'Ok Google-SignIn',
+            usuario:usuario,
+            id_token
+        });
+    } catch (error) {
+        console.log(error);
+        
+        res.status(400).json({
+            ok:false,
+            msg:"El mensaje no se pudo verificar"
+        });
     }
 
+   
     
 }

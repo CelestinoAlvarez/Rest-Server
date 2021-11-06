@@ -11,5 +11,9 @@ exports.router.post('/login', [
     express_validator_1.check('password', 'la contraseña es obligatoria').not().isEmpty(),
     validar_campos_1.validarCampos
 ], auth_controller_1.login);
+exports.router.post('/google', [
+    express_validator_1.check('id_token', 'ID-Token es obligatorio').not().isEmpty(),
+    validar_campos_1.validarCampos
+], auth_controller_1.googleSingIn);
 module.exports = exports.router;
 //# sourceMappingURL=auth.routes.js.map

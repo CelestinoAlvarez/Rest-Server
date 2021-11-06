@@ -1,0 +1,19 @@
+
+import { LoginTicket, OAuth2Client, Credentials, TokenPayload } from 'google-auth-library';
+
+const client:OAuth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+export  async function googleVerify(token:string='') {
+  const ticket:LoginTicket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,  // Specify the CLIENT_ID of the app that accesses the backend
+      // Or, if multiple clients access the backend:
+      //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
+  });
+  const { name, picture, email} = ticket.getPayload()!;
+
+  return {
+      nombre:name, 
+      imagen:picture, 
+      email}
+}

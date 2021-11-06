@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.login = void 0;
+exports.googleSingIn = exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const usuario_1 = require("../models/usuario");
 const generar_JWT_1 = require("../helpers/generar-JWT");
+const google_verify_1 = require("../helpers/google-verify");
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -55,4 +56,53 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const googleSingIn = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id_token } = req.body;
+    try {
+        const googleUser = yield google_verify_1.googleVerify(id_token);
+        console.log(googleUser);
+        const { nombre, email, imagen } = googleUser;
+        console.log('');
+        console.log(nombre + '  -   ' + email + '   -');
+        //Comprobamos si el correo ya existe en la BBDD
+        let usuario = yield usuario_1.Usuario.findOne({ email });
+        if (!usuario) {
+            //Lo creamos
+            const data = {
+                nombre,
+                email,
+                imagen,
+                password: 'Da igual lo que se mande',
+                google: true,
+                rol: 'VENTAS-ROLE'
+            };
+            usuario = new usuario_1.Usuario(data);
+            console.log('Creamos el usuario', data);
+            yield usuario.save();
+            console.log('Después de save', data);
+        }
+        //Si ya tenemos el usuario vamos a comprobar si no está bloqueado
+        if (!usuario.estado) {
+            return res.status(401).json({
+                ok: false,
+                msg: "Usuario bloqueado"
+            });
+        }
+        //Generamos el JWT
+        const token = yield generar_JWT_1.generarJWT(usuario._id);
+        res.json({
+            msg: 'Ok Google-SignIn',
+            usuario: usuario,
+            id_token
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            ok: false,
+            msg: "El mensaje no se pudo verificar"
+        });
+    }
+});
+exports.googleSingIn = googleSingIn;
 //# sourceMappingURL=auth.controller.js.map
