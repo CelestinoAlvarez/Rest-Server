@@ -15,25 +15,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 const config_db_1 = require("../db/config.db");
 class Server {
     constructor() {
         this.usuariosPath = '';
+        this.authPath = '';
         this.app = express_1.default();
         this.port = process.env.PORT;
         //Conectar a la BBDD
         this.conectarDB();
         //Rutas del API
-        this.usuariosPath = '/api/usuarios';
-        this.authPath = '/api/auth';
+        this.paths = {
+            auth: '/api/auth',
+            buscar: '/api/buscar',
+            categorias: '/api/categorias',
+            productos: '/api/productos',
+            usuarios: '/api/usuarios',
+            uploads: '/api/uploads'
+        };
         //Middlewares
         this.middlewares();
         //Rutas de mi aplicación
         this.routes();
     }
     routes() {
-        this.app.use(this.usuariosPath, require('../routes/usuarios.routes'));
-        this.app.use(this.authPath, require('../routes/auth.routes'));
+        this.app.use(this.paths.auth, require('../routes/auth.routes'));
+        this.app.use(this.paths.buscar, require('../routes/buscar.routes'));
+        this.app.use(this.paths.categorias, require('../routes/categorias.routes'));
+        this.app.use(this.paths.productos, require('../routes/productos.routes'));
+        this.app.use(this.paths.usuarios, require('../routes/usuarios.routes'));
+        this.app.use(this.paths.uploads, require('../routes/uploads.routes'));
     }
     listen() {
         this.app.listen(this.port);
@@ -45,6 +57,12 @@ class Server {
         this.app.use(express_1.default.json());
         //Directorio público
         this.app.use(express_1.default.static('public'));
+        //Carga de archivos
+        this.app.use(express_fileupload_1.default({
+            useTempFiles: true,
+            tempFileDir: '/tmp/',
+            createParentPath: true
+        }));
     }
     conectarDB() {
         return __awaiter(this, void 0, void 0, function* () {

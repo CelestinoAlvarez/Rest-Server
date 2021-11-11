@@ -1,6 +1,8 @@
 
 import { Resolver } from "dns";
 import { Request, Response } from "express";
+import { Categoria } from "../models/categorias-model";
+import { Producto } from "../models/producto-model";
 
 import { Role } from "../models/role";
 import { Usuario } from "../models/usuario";
@@ -29,3 +31,29 @@ export const esRolValido=async (rol='')=>{
         }
     }
  
+ //Verificar si existe la categoría
+ export const existeCategoria=async (id='')=>{
+    const existeCategoria = await Categoria.findById(id);
+    if(!existeCategoria){
+        throw new Error(`La categoría con el id ${id} no existe`);
+        }
+    }
+ 
+//Verificar si existe el producto
+ export const existeProducto=async (id='')=>{
+    const existeProducto = await Producto.findById(id);
+    if(!existeProducto){
+        throw new Error(`El producto con el id ${id} no existe`);
+        }
+    }
+ 
+
+//Validar coleccines permitidas
+export const coleccionesPermitidas=(coleccion:string,colecciones:string[])=>{
+    const incluida=colecciones.includes(coleccion);
+    if(!incluida){
+        throw new Error(`La colección ${coleccion} no está permitida.`)
+    }
+
+    return true;
+}

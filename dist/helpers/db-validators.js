@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.existeUsuarioPorId = exports.existeEmail = exports.esRolValido = void 0;
+exports.coleccionesPermitidas = exports.existeProducto = exports.existeCategoria = exports.existeUsuarioPorId = exports.existeEmail = exports.esRolValido = void 0;
+const categorias_model_1 = require("../models/categorias-model");
+const producto_model_1 = require("../models/producto-model");
 const role_1 = require("../models/role");
 const usuario_1 = require("../models/usuario");
 const esRolValido = (rol = '') => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,4 +37,29 @@ const existeUsuarioPorId = (id = '') => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.existeUsuarioPorId = existeUsuarioPorId;
+//Verificar si existe la categoría
+const existeCategoria = (id = '') => __awaiter(void 0, void 0, void 0, function* () {
+    const existeCategoria = yield categorias_model_1.Categoria.findById(id);
+    if (!existeCategoria) {
+        throw new Error(`La categoría con el id ${id} no existe`);
+    }
+});
+exports.existeCategoria = existeCategoria;
+//Verificar si existe el producto
+const existeProducto = (id = '') => __awaiter(void 0, void 0, void 0, function* () {
+    const existeProducto = yield producto_model_1.Producto.findById(id);
+    if (!existeProducto) {
+        throw new Error(`El producto con el id ${id} no existe`);
+    }
+});
+exports.existeProducto = existeProducto;
+//Validar coleccines permitidas
+const coleccionesPermitidas = (coleccion, colecciones) => {
+    const incluida = colecciones.includes(coleccion);
+    if (!incluida) {
+        throw new Error(`La colección ${coleccion} no está permitida.`);
+    }
+    return true;
+};
+exports.coleccionesPermitidas = coleccionesPermitidas;
 //# sourceMappingURL=db-validators.js.map
